@@ -1,8 +1,7 @@
-
 import streamlit as st
 
-st.set_page_config(page_title="Ankle Pain", layout="wide")
-st.sidebar.title("🦶 Ankle Pain")
+st.set_page_config(page_title="Ankle", layout="wide")
+st.sidebar.title("🦶 Ankle")
 st.sidebar.info("Use this module to evaluate ankle injuries.")
 
 # Theme match
@@ -23,38 +22,64 @@ st.markdown(
 )
 
 st.title("🦶 Ankle Pain Clinical Decision Tree")
-st.write("Use this tool to evaluate ankle pain and determine if further imaging or referral is needed.")
+st.write("Answer the following questions and click 'Find out possible conditions' to view results.")
 
-# Step 1: Mechanism of Injury
-trauma = st.radio("📍 Was there a trauma or twist to the ankle?", ["Yes", "No"])
+# Step 1: Mechanism
+trauma = st.radio("📍 Was there a trauma or twist to the ankle?", ["Yes", "No"], index=None)
 
-if trauma == "Yes":
-    weight_bearing = st.radio("🦵 Can the person bear weight both immediately and take 4 steps?", ["Yes", "No"])
+# Step 2: Functional
+weight_bearing = st.radio("🦵 Can the person bear weight immediately + take 4 steps?", ["Yes", "No"], index=None)
 
-    st.markdown("### 🩺 Ottawa Ankle Rules")
-    malleolar_pain = st.radio("Is there pain in the malleolar zone?", ["Yes", "No"])
-    lat_tender = st.radio("Tenderness at posterior edge or tip of lateral malleolus?", ["Yes", "No"])
-    med_tender = st.radio("Tenderness at posterior edge or tip of medial malleolus?", ["Yes", "No"])
+# Step 3: Location of pain
+region = st.radio("📌 Where is the primary pain located?", [
+    "Lateral (outside)",
+    "Medial (inside)",
+    "Posterior (Achilles)",
+    "Anterior (shin/ankle joint)",
+    "Diffuse / General",
+], index=None)
 
-    st.markdown("### 🚨 Red Flag Screening")
-    deformity = st.radio("Is there visible deformity or open wound?", ["Yes", "No"])
-    sensation = st.radio("Loss of sensation in the foot or ankle?", ["Yes", "No"])
+# Step 4: Swelling or bruising
+swelling = st.radio("💥 Is there swelling or bruising?", ["Yes", "No"], index=None)
 
-    if lat_tender == "Yes" or med_tender == "Yes" or weight_bearing == "No":
-        st.error("🦴 Suspected fracture — Refer for X-ray (Ottawa Ankle Rules met)")
-    elif deformity == "Yes" or sensation == "Yes":
-        st.error("🚨 Emergency referral — Possible dislocation or neurovascular compromise")
+# Step 5: Red flags
+red_flag = st.radio("🚨 Are there any of the following? (open wound, deformity, loss of sensation)", ["Yes", "No"], index=None)
+
+# Trigger logic only on button click
+if st.button("Find out possible conditions"):
+    st.markdown("---")
+
+    if red_flag == "Yes":
+        st.error("🚨 Emergency concern — refer for imaging & urgent care.")
+
+    elif trauma == "Yes":
+        if weight_bearing == "No" or (region in ["Lateral (outside)", "Medial (inside)"] and swelling == "Yes"):
+            st.warning("🦴 Possible fracture — Ottawa rules suggest X-ray.")
+        elif region == "Lateral (outside)":
+            st.info("🔹 Likely lateral ligament sprain (ATFL, CFL). Conservative management.")
+        elif region == "Medial (inside)":
+            st.info("🔹 Possible deltoid ligament strain or avulsion fracture.")
+        elif region == "Posterior (Achilles)":
+            st.warning("⚠️ Possible Achilles strain or rupture — perform Thompson test.")
+        elif region == "Anterior (shin/ankle joint)":
+            st.info("🔹 May be anterior impingement or joint capsule irritation.")
+        else:
+            st.info("🩺 Could be mixed soft tissue injury — monitor & treat conservatively.")
+
+    elif trauma == "No":
+        if region == "Posterior (Achilles)":
+            st.info("🔹 Possible Achilles tendinopathy — often overuse-related.")
+        elif region == "Lateral (outside)":
+            st.info("🔹 Peroneal tendon strain or instability suspected.")
+        elif region == "Medial (inside)":
+            st.info("🔹 Consider tibialis posterior tendinopathy or tarsal tunnel syndrome.")
+        elif region == "Anterior (shin/ankle joint)":
+            st.info("🔹 Shin splints, anterior impingement, or arthritis possible.")
+        else:
+            st.info("🔍 Consider arthritis, referred pain, or general overuse.")
+
     else:
-        st.success("🟢 Likely sprain — Conservative treatment with RICE and physiotherapy")
-else:
-    st.info("🔍 No clear trauma — consider overuse, arthritis, referred pain")
-    swelling = st.radio("Is there swelling or morning stiffness?", ["Yes", "No"])
-    chronicity = st.radio("Has the pain been present for more than 6 weeks?", ["Yes", "No"])
-
-    if chronicity == "Yes":
-        st.warning("🧠 Consider chronic causes — possible arthritis or tendinopathy. Refer for assessment.")
-    else:
-        st.success("🟢 Likely overuse or minor strain — Advise rest and monitor.")
+        st.warning("⚠️ Please answer all questions before proceeding.")
 
 st.markdown("---")
 st.caption("Built with ❤️ using Streamlit — by CxunChuah")
