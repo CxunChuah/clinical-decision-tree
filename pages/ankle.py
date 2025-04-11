@@ -44,7 +44,6 @@ relieving = st.text_input("**E2** – Relieving factors: What makes it better?")
 
 # ---------------------- VAS PAIN SCALE ------------------------
 st.subheader("🔢 Severity: Visual Analogue Scale (VAS)")
-
 pain_score = st.radio("Rate your current pain level (0 = no pain, 10 = worst possible):",
                       options=list(range(0, 11)),
                       horizontal=True,
@@ -54,42 +53,35 @@ if pain_score is not None:
     color = "#00cc66" if pain_score <= 3 else "#ffaa00" if pain_score <= 6 else "#ff3333"
     st.markdown(
         f"""
-        <div style='background:{color}; padding:10px; border-radius:10px; width:{pain_score*10}%; color:white; text-align:center;'>
-            Pain Level: {pain_score}/10
+        <div style='border: 1px solid #ddd; border-radius: 10px; overflow: hidden; width: 100%; height: 25px; background-color: #eee;'>
+            <div style='height: 100%; width: {pain_score * 10}%; background-color: {color}; text-align: center; color: white;'>
+                {pain_score}/10
+            </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-# ---------------------- OBSERVATION + PALPATION ------------------------
+# ---------------------- OBSERVATION ------------------------
 st.header("🧐 Observation")
-observation_general = st.multiselect("General observation findings:", [
-    "Antalgic gait",
-    "Altered posture",
-    "Guarding behavior",
-    "Use of assistive device"
-])
 
-observation_local = st.multiselect("Local signs at ankle:", [
-    "Swelling",
-    "Bruising",
-    "Redness",
-    "Deformity",
-    "Muscle wasting"
-])
+st.subheader("Part A – Gait Pattern")
+gait_pattern = st.selectbox("Observed gait type:", ["Normal", "Antalgic", "High-steppage", "Trendelenburg", "Limp", "Other"])
 
+st.subheader("Part B – Consciousness Level")
+consciousness = st.radio("Patient's consciousness level:", ["Alert", "Drowsy", "Confused", "Unresponsive"])
+
+st.subheader("Local Observation Findings")
+cols = st.columns(3)
+local_signs = {}
+options = ["Swelling", "Bruising", "Redness", "Deformity", "Muscle wasting"]
+for i, opt in enumerate(options):
+    with cols[i % 3]:
+        local_signs[opt] = st.checkbox(opt)
+
+# ---------------------- PALPATION PLACEHOLDER ------------------------
 st.header("🤲 Palpation")
-palpation_sites = st.multiselect("Tenderness on palpation:", [
-    "ATFL (anterior talofibular ligament)",
-    "CFL (calcaneofibular ligament)",
-    "Deltoid ligament",
-    "Medial malleolus",
-    "Lateral malleolus",
-    "Achilles tendon",
-    "Plantar fascia",
-    "Sinus tarsi",
-    "Navicular / base of 5th MT"
-])
+st.info("Palpation section will be enhanced next.")
 
 st.markdown("---")
 st.caption("Built with ❤️ using Streamlit — by CxunChuah")
