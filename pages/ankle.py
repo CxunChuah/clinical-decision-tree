@@ -30,30 +30,21 @@ st.write("Begin with a structured pain assessment below.")
 # ---------------------- SOCRATES PAIN ASSESSMENT ------------------------
 st.header("📋 SOCRATES Pain Assessment")
 
-site = st.text_input("**S** – Site: Where is the pain located?")
-onset = st.text_input("**O** – Onset: When did the pain start? Was it sudden or gradual?")
-character = st.text_input("**C** – Character: What does the pain feel like? (e.g., sharp, dull, burning)")
-radiation = st.text_input("**R** – Radiation: Does the pain spread anywhere?")
-associated = st.text_input("**A** – Associated symptoms: Any swelling, numbness, tingling?")
-time = st.text_input("**T** – Timing: Constant or intermittent? Worse at certain times?")
-exacerbate_relievers = st.text_input("**E** – Exacerbating/Relieving factors: What makes it better or worse?")
+# Site with conditional "Other"
+site_option = st.radio("**S** – Site: Where is the pain located?", ["Lateral", "Medial", "Posterior", "Anterior", "Diffuse", "Other"])
+site_other = st.text_input("If other, please specify:") if site_option == "Other" else ""
+
+onset = st.radio("**O** – Onset: When did the pain start?", ["Sudden", "Gradual", "Other"])
+character = st.radio("**C** – Character: What does the pain feel like?", ["Sharp", "Dull", "Burning", "Aching", "Throbbing", "Other"])
+radiation = st.radio("**R** – Radiation: Does the pain spread anywhere?", ["Yes", "No"])
+associated = st.text_input("**A** – Associated symptoms (e.g., swelling, numbness, tingling):")
+time = st.radio("**T** – Timing: Is the pain constant or intermittent?", ["Constant", "Intermittent", "Worse in morning", "Worse in evening"])
+exacerbating = st.text_input("**E1** – Exacerbating factors: What makes it worse?")
+relieving = st.text_input("**E2** – Relieving factors: What makes it better?")
 
 # ---------------------- VAS PAIN SCALE ------------------------
 st.subheader("🔢 Severity: Visual Analogue Scale (VAS)")
-pain_score = st.slider("Rate your current pain level:", 0, 10, step=1)
-
-# ---------------------- SUBMIT BUTTON ------------------------
-if st.button("🧾 Submit Pain Profile"):
-    st.markdown("---")
-    st.subheader("🧠 Summary of Pain Assessment")
-    st.markdown(f"**Site:** {site}")
-    st.markdown(f"**Onset:** {onset}")
-    st.markdown(f"**Character:** {character}")
-    st.markdown(f"**Radiation:** {radiation}")
-    st.markdown(f"**Associated symptoms:** {associated}")
-    st.markdown(f"**Timing:** {time}")
-    st.markdown(f"**Exacerbating/Relieving Factors:** {exacerbate_relievers}")
-    st.markdown(f"**VAS Score:** {pain_score}/10")
+pain_score = st.radio("Tap to select your pain level:", list(range(0, 11)), horizontal=True)
 
 st.markdown("---")
 st.caption("Built with ❤️ using Streamlit — by CxunChuah")
